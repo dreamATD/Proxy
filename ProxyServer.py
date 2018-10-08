@@ -46,25 +46,18 @@ while True:
                 # Fill in end.
                 # Create a temporary file on this socket and ask port 80 for the file requested by the client
 
-                # fileobj = c.makefile('r', None)
-                # fileobj.write(("GET " + "http://" + filename + " HTTP/1.0\r\n\r\n"))
                 c.send(("GET " + "http://" + filename + " HTTP/1.0\r\n\r\n").encode())
 
-                # bufs2c = fileobj.readlines()
-                bufs2c = c.recv(1024)
+                msg = ''
+                while True:
+                    bufs2c = c.recv(1024)
+                    if not bufs2c:
+                        break
+                    print(bufs2c.decode())
+                    msg += bufs2c.decode()
 
-                # Create a new file in the cache for the requested file.
-                # Also send the response in the buffer to client socket and the corresponding file in the cache
-                tmpFile = open("./" + filename, "w")
-
-                # Fill in start
-                # for i in range(0, len(bufs2c)):
-                #    tmpFile.write(bufs2c[i].decode())
-                #    tcpCliSock.send(bufs2c[i])
-                tmpFile.write(bufs2c.decode())
-                tcpCliSock.send(bufs2c)
-
-                # Fill in end.
+                print(msg)
+                tcpCliSock.sendall(msg.encode())
             except:
                 print('Illegal request')
         else:
